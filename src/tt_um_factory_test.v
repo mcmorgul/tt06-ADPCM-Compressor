@@ -29,9 +29,9 @@ module tt_um_factory_test (
 		.encPcm(uo_out[4:1])
 	);
 
-	assign uio_out = 1'd0;
-	assign uio_oe = 1'd0;
-
+	assign uio_out = 7'd0;
+	assign uio_oe = 7'd0;
+	assign uo_out[7:5] = 3'd0;
 
 
 endmodule // tt_um_factory_test
