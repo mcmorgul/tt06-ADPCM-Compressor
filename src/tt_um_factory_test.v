@@ -19,23 +19,17 @@ module tt_um_factory_test (
 	input  wire       rst_n
 );
 
-	reg rst_n_i;
-	reg [7:0] cnt;
 
-	always @(posedge clk or negedge rst_n)
-		if (~rst_n)
-			rst_n_i <= 1'b0;
-		else
-			rst_n_i <= 1'b1;
-
-	always @(posedge clk or negedge rst_n_i)
-		if (~rst_n_i)
-			cnt <= 0;
-		else
-			cnt <= cnt + 1;
+	CIC_ADPCM_Wrapper compressor (
+		.clk(ui_in[0])
+		.slow_clk(ui_in[1])
+		.block_enable(ui_in[2])
+		.pdm_in(ui_in[3])
+		.outValid(uo_out[0])
+		.encPcm(uo_out[7:4])
+	)
 	
-	assign uo_out  = ui_in[0] ? cnt : uio_in;
-	assign uio_out = ui_in[0] ? cnt : 8'h00;
-	assign uio_oe  = ui_in[0] ? 8'hff : 8'h00;
+
+
 
 endmodule // tt_um_factory_test
