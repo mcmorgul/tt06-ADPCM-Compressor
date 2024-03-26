@@ -21,11 +21,11 @@ module tt_um_factory_test (
 
 
 	CIC_ADPCM_Wrapper compressor (
-		.clk(ui_in[0])
-		.slow_clk(ui_in[1])
-		.block_enable(ui_in[2])
-		.pdm_in(ui_in[3])
-		.outValid(uo_out[0])
+		.clk(ui_in[0]),
+		.slow_clk(ui_in[1]),
+		.block_enable(ui_in[2]),
+		.pdm_in(ui_in[3]),
+		.outValid(uo_out[0]),
 		.encPcm(uo_out[7:4])
 	);
 	
