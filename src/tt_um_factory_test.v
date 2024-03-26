@@ -20,7 +20,7 @@ module tt_um_factory_test (
 );
 
 
-	CIC_ADPCM_Wrapper compressor (
+	CIC_ADPCM_Wrapper compressor(
 		.clk(ui_in[0]),
 		.slow_clk(ui_in[1]),
 		.block_enable(ui_in[2]),
