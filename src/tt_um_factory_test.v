@@ -30,8 +30,8 @@ module tt_um_factory_test (
 	);
 
 	always @(*) begin
-		assign uio_out <= 1'd0;
-		assign uio_oe <= 1'd0;
+		uio_out <= 1'd0;
+		uio_oe <= 1'd0;
 	end
 
 
