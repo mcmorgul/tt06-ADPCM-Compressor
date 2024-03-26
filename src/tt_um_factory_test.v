@@ -27,7 +27,7 @@ module tt_um_factory_test (
 		.pdm_in(ui_in[3])
 		.outValid(uo_out[0])
 		.encPcm(uo_out[7:4])
-	)
+	);
 	
 
 
