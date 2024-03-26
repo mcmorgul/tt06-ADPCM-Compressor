@@ -12,8 +12,8 @@ module tt_um_factory_test (
 	input  wire [7:0] ui_in,	// Dedicated inputs
 	output wire [7:0] uo_out,	// Dedicated outputs
 	input  wire [7:0] uio_in,	// IOs: Input path
-	//output wire [7:0] uio_out,	// IOs: Output path
-	//output wire [7:0] uio_oe,	// IOs: Enable path (active high: 0=input, 1=output)
+	output wire [7:0] uio_out,	// IOs: Output path
+	output wire [7:0] uio_oe,	// IOs: Enable path (active high: 0=input, 1=output)
 	input  wire       ena,
 	input  wire       clk,
 	input  wire       rst_n
@@ -28,8 +28,9 @@ module tt_um_factory_test (
 		.outValid(uo_out[0]),
 		.encPcm(uo_out[4:1])
 	);
-	
 
+	assign uio_out <= 1'd0;
+	assign uio_oe <= 1'd0;
 
 
 endmodule // tt_um_factory_test
