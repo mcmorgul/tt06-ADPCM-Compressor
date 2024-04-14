@@ -3,7 +3,44 @@
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import RisingEdge, FallingEdge, ClockCycles
+from cocotb.binary import BinaryValue
+
+@cocotb.test()
+async def test_CIC_ADPCM_Wrapper(dut):
+    # Create a 10us period clock on port 'clk'
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())  # Start the clock
+
+    # Reset your module
+    dut.rst.value = 1
+    await ClockCycles(dut.clk, 5)
+    dut.rst.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    # You can now drive signals like 'clk_enable' and 'filter_in'
+    # For example, if you want to send a sequence of values:
+    dut.clk_enable.value = 1
+    for value in range(10):  # Replace with your actual data
+        dut.filter_in.value = BinaryValue(value)
+        await RisingEdge(dut.clk)
+
+    # Here you can add checks for 'outValid' and 'outSamp' signals
+    # For example, you can wait for 'outValid' to assert and then check 'outSamp'
+    await RisingEdge(dut.outValid)
+    out_sample = dut.outSamp.value
+    # Add your assertions here
+
+# Run this testbench using the cocotb Makefile or by setting the appropriate environment variables.
+
+
+
+
+
+
+#import cocotb
+#from cocotb.clock import Clock
+#from cocotb.triggers import ClockCycles
 
 
 # @cocotb.test()
