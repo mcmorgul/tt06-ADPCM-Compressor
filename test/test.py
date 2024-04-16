@@ -1,95 +1,35 @@
-# SPDX-FileCopyrightText: © 2023 Uri Shaked <uri@tinytapeout.com>
-# SPDX-License-Identifier: MIT
-
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, FallingEdge, ClockCycles
+from cocotb.triggers import RisingEdge, ClockCycles
 from cocotb.binary import BinaryValue
 
 @cocotb.test()
 async def test_CIC_ADPCM_Wrapper(dut):
     # Create a 10us period clock on port 'clk'
     clock = Clock(dut.ui_in[0], 10, units="us")
-    cocotb.start_soon(clock.start())  # Start the clock
+    cocotb.start_soon(clock.start())  # Start the fast clock
 
     slow_clk = Clock(dut.ui_in[1], 80, units="us")
-    cocotb.start_soon(slow_clk.start())  # Start the clock
+    cocotb.start_soon(slow_clk.start())  # Start the slow clock
     
-
     # Reset your module
-    dut.ui_in[2].value = 0
+    dut.ui_in[2].value = 0  # Reset
     dut.ui_in[3].value = 0  # Set pdm_in to 0 and maintain this throughout the test
-    await ClockCycles(dut.clk, 5)
-    dut.ui_in[2].value = 1
+    await ClockCycles(dut.ui_in[0], 5)
+    dut.ui_in[2].value = 1  # Release reset
     await ClockCycles(dut.ui_in[0], 1)
 
-    # Drive pdm_in to 0 for 16 clock cycles
-    for _ in range(18):
-        dut.ui_in[3].value = 0
+    # Start monitoring encPcm output
+    initial_value = dut.u0_out[4].value.binstr
+
+    # Run for 20 slow clock cycles
+    for _ in range(20):
         await RisingEdge(dut.ui_in[1])
-
-    # After 16 cycles, keep monitoring the encPcm output for its MSB to go high
-    while True:
-        await RisingEdge(dut.ui_in[1])
-        if dut.u0_out[4].value.binstr[0] == '0':  # Check if MSB of encPcm is high
-            print("MSB of encPcm went high after the initial 16 clock cycles.")
-            break
-
-
-
-# Run this testbench using the cocotb Makefile or by setting the appropriate environment variables.
-
-
-
-
-
-
-#import cocotb
-#from cocotb.clock import Clock
-#from cocotb.triggers import ClockCycles
-
-
-# @cocotb.test()
-# async def test_loopback(dut):
-#     dut._log.info("Start")
-
-#     clock = Clock(dut.clk, 10, units="us")
-#     cocotb.start_soon(clock.start())
-
-#     # Reset
-#     dut._log.info("Reset")
-#     dut.ena.value = 1
-
-#     # ui_in[0] == 0: Copy bidirectional pins to outputs
-#     dut.ui_in.value = 0b0
-#     dut.uio_in.value = 0
-#     dut.rst_n.value = 0
-#     await ClockCycles(dut.clk, 10)
-#     dut.rst_n.value = 1
-
-#     for i in range(256):
-#         dut.uio_in.value = i
-#         await ClockCycles(dut.clk, 1)
-#         assert dut.uo_out.value == i
-
-
-# @cocotb.test()
-# async def test_counter(dut):
-#     dut._log.info("Start")
-
-#     clock = Clock(dut.clk, 10, units="us")
-#     cocotb.start_soon(clock.start())
-
-#     # ui_in[0] == 1: bidirectional outputs enabled, put a counter on both output and bidirectional pins
-#     dut.ui_in.value = 0b1
-#     dut.uio_in.value = 0
-#     dut.rst_n.value = 0
-#     await ClockCycles(dut.clk, 10)
-#     dut.rst_n.value = 1
-#     await ClockCycles(dut.clk, 2)
-
-#     dut._log.info("Testing counter")
-#     for i in range(256):
-#         assert dut.uo_out.value == dut.uio_out.value
-#         assert dut.uo_out.value == i
-#         await ClockCycles(dut.clk, 1)
+        current_value = dut.u0_out[4].value.binstr
+        if current_value != initial_value:
+            print("Change detected in encPcm after 20 slow clock cycles.")
+            assert True, "Change in encPcm confirmed"
+            return
+    
+    # If no change is detected, raise an assertion error
+    assert False, "No change in encPcm after 20 slow clock cycles"
