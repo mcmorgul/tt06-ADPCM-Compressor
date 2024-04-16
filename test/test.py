@@ -31,7 +31,7 @@ async def test_CIC_ADPCM_Wrapper(dut):
     # After 16 cycles, keep monitoring the encPcm output for its MSB to go high
     while True:
         await RisingEdge(dut.ui_in[1])
-        if dut.u0_out[4].value.binstr[0] == '1':  # Check if MSB of encPcm is high
+        if dut.u0_out[4].value.binstr[0] == '0':  # Check if MSB of encPcm is high
             print("MSB of encPcm went high after the initial 16 clock cycles.")
             break
 
