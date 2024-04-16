@@ -4,7 +4,7 @@ from cocotb.triggers import RisingEdge, ClockCycles
 from cocotb.binary import BinaryValue
 
 @cocotb.test()
-async def test_CIC_ADPCM_Wrapper(dut):
+async def tt_um_factory_test(dut):
     # Create a 10us period clock on port 'clk' for fast clock
     fast_clock = Clock(dut.ui_in[0], 10, units="us")
     cocotb.start_soon(fast_clock.start())
