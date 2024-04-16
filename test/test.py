@@ -9,29 +9,29 @@ from cocotb.binary import BinaryValue
 @cocotb.test()
 async def test_CIC_ADPCM_Wrapper(dut):
     # Create a 10us period clock on port 'clk'
-    clock = Clock(dut.clk, 10, units="us")
+    clock = Clock(dut.ui_in[0], 10, units="us")
     cocotb.start_soon(clock.start())  # Start the clock
 
-    slow_clk = Clock(dut.slow_clk, 80, units="us")
+    slow_clk = Clock(dut.ui_in[1], 80, units="us")
     cocotb.start_soon(slow_clk.start())  # Start the clock
     
 
     # Reset your module
-    dut.block_enable.value = 0
-    dut.pdm_in.value = 0  # Set pdm_in to 0 and maintain this throughout the test
+    dut.ui_in[2].value = 0
+    dut.ui_in[3].value = 0  # Set pdm_in to 0 and maintain this throughout the test
     await ClockCycles(dut.clk, 5)
-    dut.block_enable.value = 1
-    await ClockCycles(dut.clk, 1)
+    dut.ui_in[2].value = 1
+    await ClockCycles(dut.ui_in[0], 1)
 
     # Drive pdm_in to 0 for 16 clock cycles
     for _ in range(18):
-        dut.pdm_in.value = 0
-        await RisingEdge(dut.slow_clk)
+        dut.ui_in[3].value = 0
+        await RisingEdge(dut.ui_in[1])
 
     # After 16 cycles, keep monitoring the encPcm output for its MSB to go high
     while True:
-        await RisingEdge(dut.slow_clk)
-        if dut.encPcm.value.binstr[0] == '1':  # Check if MSB of encPcm is high
+        await RisingEdge(dut.ui_in[1])
+        if dut.u0_out[4].value.binstr[0] == '1':  # Check if MSB of encPcm is high
             print("MSB of encPcm went high after the initial 16 clock cycles.")
             break
 
