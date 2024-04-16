@@ -12,7 +12,7 @@ async def test_CIC_ADPCM_Wrapper(dut):
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())  # Start the clock
 
-    slow_clock = Clock(dut.slow_clk, 80, units="us")
+    slow_clk = Clock(dut.slow_clk, 80, units="us")
     cocotb.start_soon(slow_clk.start())  # Start the clock
     
 
@@ -31,7 +31,7 @@ async def test_CIC_ADPCM_Wrapper(dut):
     # After 16 cycles, keep monitoring the encPcm output for its MSB to go high
     while True:
         await RisingEdge(dut.slow_clk)
-        if dut.encPcm.value.binstr[0] == '0':  # Check if MSB of encPcm is high
+        if dut.encPcm.value.binstr[0] == '1':  # Check if MSB of encPcm is high
             print("MSB of encPcm went high after the initial 16 clock cycles.")
             break
 
