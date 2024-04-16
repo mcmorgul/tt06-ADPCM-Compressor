@@ -12,24 +12,30 @@ async def test_CIC_ADPCM_Wrapper(dut):
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())  # Start the clock
 
+    slow_clock = Clock(dut.slow_clock, 80, units="us")
+    cocotb.start_soon(slow_clock.start())  # Start the clock
+    
+
     # Reset your module
-    dut.rst.value = 1
+    dut.block_enable.value = 0
+    dut.pdm_in.value = 0  # Set pdm_in to 0 and maintain this throughout the test
     await ClockCycles(dut.clk, 5)
-    dut.rst.value = 0
+    dut.block_enable.value = 1
     await ClockCycles(dut.clk, 1)
 
-    # You can now drive signals like 'clk_enable' and 'filter_in'
-    # For example, if you want to send a sequence of values:
-    dut.clk_enable.value = 1
-    for value in range(10):  # Replace with your actual data
-        dut.filter_in.value = BinaryValue(value)
+    # Drive pdm_in to 0 for 16 clock cycles
+    for _ in range(16):
+        dut.pdm_in.value = 0
         await RisingEdge(dut.clk)
 
-    # Here you can add checks for 'outValid' and 'outSamp' signals
-    # For example, you can wait for 'outValid' to assert and then check 'outSamp'
-    await RisingEdge(dut.outValid)
-    out_sample = dut.outSamp.value
-    # Add your assertions here
+    # After 16 cycles, keep monitoring the encPcm output for its MSB to go high
+    while True:
+        await RisingEdge(dut.clk)
+        if dut.encPcm.value.binstr[-1] == '1':  # Check if MSB of encPcm is high
+            print("MSB of encPcm went high after the initial 16 clock cycles.")
+            break
+
+
 
 # Run this testbench using the cocotb Makefile or by setting the appropriate environment variables.
 
