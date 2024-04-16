@@ -24,7 +24,7 @@ async def test_CIC_ADPCM_Wrapper(dut):
     await ClockCycles(dut.clk, 1)
 
     # Drive pdm_in to 0 for 16 clock cycles
-    for _ in range(16):
+    for _ in range(18):
         dut.pdm_in.value = 0
         await RisingEdge(dut.slow_clock)
 
