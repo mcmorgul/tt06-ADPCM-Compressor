@@ -6,7 +6,7 @@
  * Author: Sylvain Munaut <tnt@246tNt.com>
  */
 
-`default_nettype none
+`define default_nettype none
 
 module tt_um_factory_test (
 	input  wire [7:0] ui_in,	// Dedicated inputs
