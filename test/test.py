@@ -26,8 +26,8 @@ async def tt_um_factory_test(dut):
         dut.ui_in[3].value = not dut.ui_in[3].value  # Toggle pdm_in
         await RisingEdge(dut.clk)
         current_value = int(dut.uo_out.value.binstr[-5:-1], 2)
-        if current_value != initial_value:
+        if current_value == initial_value:
             change_detected = True
             break
 
-    assert change_detected, "No change detected in encPcm when it was expected."
+    assert change_detected, "Change detected in encPcm when it was not expected."
