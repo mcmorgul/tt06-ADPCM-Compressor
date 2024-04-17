@@ -21,7 +21,7 @@ async def tt_um_factory_test(dut):
 
     # Manually toggle pdm_in to simulate slow clock effect
     change_detected = False
-    for _ in range(10):  # Less number, since we wait more due to slow_clk_period
+    for _ in range(20):  # Less number, since we wait more due to slow_clk_period
         await Timer(slow_clk_period, units='us')
         dut.ui_in[3].value = not dut.ui_in[3].value  # Toggle pdm_in
         await RisingEdge(dut.clk)
