@@ -1,41 +1,39 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# IMA ADPCM Audio Compression Accelerator
 
 - [Read the documentation for project](docs/info.md)
 
-## What is Tiny Tapeout?
+## What is this project
 
-TinyTapeout is an educational project that aims to make it easier and cheaper than ever to get your digital designs manufactured on a real chip.
+This HDL block accepts a pulse density modulated (PDM) microphone signal and produces an encoded output at a lower sampling frequency while maintaining audio intelligibility.
 
-To learn more and get started, visit https://tinytapeout.com.
+Expected Inputs: clk (clk) slow_clk (ui_in[1]) for the ADPCM block at 1/8 frequency of clk Pulse Density Modulated input pdm_in (ui_in[2]) at clocked with clk block_enable (ui_in[3]) (active high): single bit enable for the entire block
 
-## Verilog Projects
+Outputs: encPcm (uo_out[4:1]): the final 4 bit ADPCM encoded output outValid (uo_out[0]): Output Valid flag for the ADPCM block, goes high for one cycle of slow_clk each time a new valid adpcm value is output
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties.
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Optionally, add a testbench to the `test` folder. See [test/README.md](test/README.md) for more information.
 
-The GitHub action will automatically build the ASIC files using [OpenLane](https://www.zerotoasiccourse.com/terminology/openlane/).
+## Verilog Files
 
-## Enable GitHub actions to build the results page
+1. CICDecimatorVerilogBlock.v
+   The CIC decimation filter to parallelize serial pdm microphone data and decimate by a factor of 64
+   
+2. CIC_ADPCM_Wrapper.v
+  The wrapper block with control logic for block_enable and connections between the CIC and encoder
+   
+   
+3. ima_adpcm_enc.v
+  The IMA ADPCM encoder which encodes the 16 bit output of the CIC filter to 4 bit adpcm samples
+   
+   
+4. tt_um_factory_test.v
+   A Top level wrapper to match the tinytapeout signal names
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
 
 ## Resources
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://docs.google.com/document/d/1aUUZ1jthRpg4QURIIyzlOaPWlmQzr-jBn3wZipVUPt4)
+- [CIC Filter Explanation](https://wirelesspi.com/cascaded-integrator-comb-cic-filters-a-staircase-of-dsp/)
+- [CIC Filter Continued](https://www.dsprelated.com/showarticle/1337.php)
+- [IMA ADPCM Standard] (https://ww1.microchip.com/downloads/en/AppNotes/00643b.pdf)
 
-## What next?
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@matthewvenn](https://twitter.com/matthewvenn)
