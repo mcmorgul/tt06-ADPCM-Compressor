@@ -18,11 +18,11 @@ async def tt_um_factory_test(dut):
     dut.ui_in[2].value = 1  # Release reset (block_enable high)
 
     # Monitor encPcm for 20 slow clock cycles
-    initial_value = int(dut.uo_out[4:1].value)  # Capture the initial encPcm value
+    initial_value = int(dut.uo_out.value[4:1])  # Capture the initial encPcm value
     change_detected = False
     for _ in range(20):
         await RisingEdge(dut.ui_in[1])  # Wait for slow clock edges
-        current_value = int(dut.uo_out[4:1].value)
+        current_value = int(dut.uo_out.value[4:1])
         if current_value != initial_value:
             change_detected = True
             break
